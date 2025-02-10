@@ -1,12 +1,10 @@
-## Retrieving a Book Instance
+# Retrieve a Book Entry
 
+To retrieve a book from the database using Django's ORM, use the `get` method:
+
+### **Retrieve a Book by ID**
 ```python
 from bookshelf.models import Book
 
-# Retrieve all books
-books = Book.objects.all()
-
-# Display all books
-for book in books:
-    print(book)
-#Expected Output: <Book: 1984 by George Orwell>
+book = Book.objects.get(id=1)  # Retrieves the book with ID 1
+print(book.title, book.author, book.publication_year)
