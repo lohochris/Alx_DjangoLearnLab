@@ -34,3 +34,19 @@ for book in books_in_central:
 
 print("\nLibrarian for Central Library:")
 print(library1.librarian.name)
+
+# New Function to Get Library by Name
+def get_library_by_name(library_name):
+    try:
+        library = Library.objects.get(name=library_name)
+        return library
+    except Library.DoesNotExist:
+        return None
+
+# Testing the new query
+print("\nTesting get_library_by_name() function:")
+test_library = get_library_by_name("Central Library")
+if test_library:
+    print(f"Library Found: {test_library.name}")
+else:
+    print("Library not found.")
