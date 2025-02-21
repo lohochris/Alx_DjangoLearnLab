@@ -35,7 +35,7 @@ for book in books_in_central:
 print("\nLibrarian for Central Library:")
 print(library1.librarian.name)
 
-# New Function to Get Library by Name
+# Get Library by Name
 def get_library_by_name(library_name):
     try:
         library = Library.objects.get(name=library_name)
@@ -43,10 +43,40 @@ def get_library_by_name(library_name):
     except Library.DoesNotExist:
         return None
 
-# Testing the new query
+# Testing get_library_by_name
 print("\nTesting get_library_by_name() function:")
 test_library = get_library_by_name("Central Library")
 if test_library:
     print(f"Library Found: {test_library.name}")
 else:
     print("Library not found.")
+
+# New Function to Get Author by Name
+def get_author_by_name(author_name):
+    try:
+        author = Author.objects.get(name=author_name)
+        return author
+    except Author.DoesNotExist:
+        return None
+
+# New Query to Filter Books by Author
+def get_books_by_author(author_name):
+    author = get_author_by_name(author_name)
+    if author:
+        books = Book.objects.filter(author=author)
+        return books
+    else:
+        return []
+
+# Testing the new queries
+print("\nTesting get_author_by_name() and get_books_by_author() functions:")
+author_name_to_test = "George Orwell"
+author = get_author_by_name(author_name_to_test)
+if author:
+    print(f"Author Found: {author.name}")
+    books = get_books_by_author(author_name_to_test)
+    print(f"Books by {author.name}:")
+    for book in books:
+        print(book.title)
+else:
+    print("Author not found.")
