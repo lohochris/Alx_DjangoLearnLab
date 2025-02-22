@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import user_passes_test, login_required, permission_required
-from .models import UserProfile, Book
+from .models import UserProfile, Book, Library  # Added Library import
 from .forms import BookForm  # Make sure to create this form for adding and editing books
 
 # Role Check Functions
@@ -115,3 +115,9 @@ def delete_book(request, book_id):
         messages.success(request, 'Book deleted successfully!')
         return redirect('list_books')
     return render(request, 'relationship_app/delete_book.html', {'book': book})
+
+# Library Detail View
+def library_detail(request, library_id):
+    library = get_object_or_404(Library, id=library_id)
+    books = library.books.all()  # Get all books in the library
+    return render(request, 'relationship_app/library_detail.html', {'library': library, 'books': books})
