@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views  # Import views from the same directory
+from .views import LibraryDetailView
 
 urlpatterns = [
     path('', views.home, name='home'),  # Home view
@@ -15,4 +16,7 @@ urlpatterns = [
     path('books/add/', views.add_book, name='add_book'),  # Add book
     path('books/edit/<int:book_id>/', views.edit_book, name='edit_book'),  # Edit book
     path('books/delete/<int:book_id>/', views.delete_book, name='delete_book'),  # Delete book
+    path('library/<int:pk>/', LibraryDetailView.as_view(), name='library_detail'),
+   
+
 ]
