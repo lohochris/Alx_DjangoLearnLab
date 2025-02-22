@@ -1,6 +1,9 @@
 from django.urls import path
 from . import views  # Import views from the same directory
 from .views import LibraryDetailView
+from .views import list_books
+
+
 
 urlpatterns = [
     path('', views.home, name='home'),  # Home view
@@ -11,6 +14,7 @@ urlpatterns = [
     path('admin-view/', views.admin_view, name='admin_view'),
     path('librarian-view/', views.librarian_view, name='librarian_view'),
     path('member-view/', views.member_view, name='member_view'),
+    path('books/', list_books, name='list_books'),
 
     # New Paths for Book Management
     path('books/add/', views.add_book, name='add_book'),  # Add book
