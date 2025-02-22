@@ -5,6 +5,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import user_passes_test, login_required, permission_required
 from .models import UserProfile, Book, Library  # Added Library import
 from .forms import BookForm  # Make sure to create this form for adding and editing books
+from .models import Library
+
 
 # Role Check Functions
 def is_admin(user):
@@ -72,6 +74,14 @@ def admin_view(request):
 @login_required
 def librarian_view(request):
     return render(request, 'relationship_app/librarian_view.html')
+
+class Library(models.Model):
+    name = models.CharField(max_length=100)
+    location = models.CharField(max_length=200)
+    established_date = models.DateField()
+
+    def __str__(self):
+        return self.name
 
 # Member View
 @user_passes_test(is_member, login_url='login')
