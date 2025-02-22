@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import user_passes_test, login_required, per
 from .models import UserProfile, Book, Library  # Added Library import
 from .forms import BookForm  # Make sure to create this form for adding and editing books
 from .models import Library
+from django.views.generic.detail import DetailView
+
 
 
 # Role Check Functions
@@ -82,6 +84,8 @@ class Library(models.Model):
 
     def __str__(self):
         return self.name
+
+
 
 # Member View
 @user_passes_test(is_member, login_url='login')
