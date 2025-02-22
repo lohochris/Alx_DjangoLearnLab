@@ -13,6 +13,7 @@ from django.contrib.auth.forms import UserCreationForm
 
 
 
+
 # Role Check Functions
 def is_admin(user):
     if user.is_authenticated:
@@ -67,6 +68,18 @@ def list_books(request):
 # Home View
 def home(request):
     return render(request, 'relationship_app/home.html')
+
+# Registration View
+def register_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Account created successfully! You can now log in.')
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+    return render(request, 'relationship_app/register.html', {'form': form})
 
 # Admin View
 @user_passes_test(is_admin, login_url='login')
