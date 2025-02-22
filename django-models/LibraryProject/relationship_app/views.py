@@ -1,6 +1,11 @@
 from django.contrib.auth import authenticate, login, logout  # Authentication functions
 from django.contrib.auth.forms import UserCreationForm  # Form for user registration
-from django.contrib.auth.decorators import user_passes_test, login_required, permission_required  # Access control
+from django.contrib.auth.decorators import (
+    user_passes_test,
+    login_required,
+    permission_required,  # Explicitly listed here
+)  # Access control decorators
+
 from django.shortcuts import render, redirect, get_object_or_404  # View utilities
 from django.contrib import messages  # Flash messages for user feedback
 from django.core.exceptions import ObjectDoesNotExist  # Exception handling
@@ -8,6 +13,7 @@ from django.views.generic.detail import DetailView  # Class-based detail view
 
 from .models import UserProfile, Book, Library  # Importing necessary models
 from .forms import BookForm  # Form for adding and editing books
+
 
 
 
