@@ -10,6 +10,8 @@ from django.views.generic.detail import DetailView  # Class-based detail view
 
 from .models import UserProfile, Book, Library  # Importing necessary models
 from .forms import BookForm  # Form for adding and editing books
+from .models import Library
+
 
 
 
