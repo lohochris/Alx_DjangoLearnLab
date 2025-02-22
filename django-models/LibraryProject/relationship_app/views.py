@@ -7,6 +7,9 @@ from .models import UserProfile, Book, Library  # Added Library import
 from .forms import BookForm  # Make sure to create this form for adding and editing books
 from .models import Library
 from django.views.generic.detail import DetailView
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
+
 
 
 
