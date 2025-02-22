@@ -2,6 +2,7 @@ from django.urls import path
 from . import views  # Import views from the same directory
 from .views import LibraryDetailView
 from .views import list_books
+from django.contrib.auth.views import LoginView, LogoutView
 
 
 
@@ -15,6 +16,8 @@ urlpatterns = [
     path('librarian-view/', views.librarian_view, name='librarian_view'),
     path('member-view/', views.member_view, name='member_view'),
     path('books/', list_books, name='list_books'),
+    path('login/', LoginView.as_view(template_name='relationship_app/login.html'), name='login'),
+    path('logout/', LogoutView.as_view(template_name='relationship_app/logout.html'), name='logout'),
 
     # New Paths for Book Management
     path('books/add/', views.add_book, name='add_book'),  # Add book
