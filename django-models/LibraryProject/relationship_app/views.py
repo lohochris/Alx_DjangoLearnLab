@@ -85,7 +85,10 @@ class Library(models.Model):
     def __str__(self):
         return self.name
 
-
+class LibraryDetailView(DetailView):
+    model = Library
+    template_name = 'relationship_app/library_detail.html'
+    context_object_name = 'library'
 
 # Member View
 @user_passes_test(is_member, login_url='login')
