@@ -1,14 +1,14 @@
-from django.contrib.auth import authenticate, login, logout  # Import authentication functions
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.decorators import user_passes_test, login_required, permission_required
-from .models import UserProfile, Book, Library  # Added Library import
-from .forms import BookForm  # Make sure to create this form for adding and editing books
-from .models import Library
-from django.views.generic.detail import DetailView
-from django.contrib.auth import login
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate, login, logout  # Authentication functions
+from django.contrib.auth.forms import UserCreationForm  # Form for user registration
+from django.contrib.auth.decorators import user_passes_test, login_required, permission_required  # Access control
+from django.shortcuts import render, redirect, get_object_or_404  # View utilities
+from django.contrib import messages  # Flash messages for user feedback
+from django.core.exceptions import ObjectDoesNotExist  # Exception handling
+from django.views.generic.detail import DetailView  # Class-based detail view
+
+from .models import UserProfile, Book, Library  # Importing necessary models
+from .forms import BookForm  # Form for adding and editing books
+
 
 
 
