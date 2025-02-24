@@ -76,9 +76,9 @@ TEMPLATES = [
 
 
 # Redirect URLs after login/logout
+LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
-
 
 WSGI_APPLICATION = 'LibraryProject.wsgi.application'
 
