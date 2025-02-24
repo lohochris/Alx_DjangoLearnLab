@@ -1,24 +1,14 @@
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import UserCreationForm  # Form for user registration
-from django.contrib.auth.decorators import user_passes_test, login_required  # Access control decorators
-from django.contrib.auth.decorators import permission_required  # Specifically added this line
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import user_passes_test, login_required, permission_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
+from django.views.generic.detail import DetailView
+from django.contrib.auth import views as auth_views  # Built-in authentication views
 
-from django.shortcuts import render, redirect, get_object_or_404  # View utilities
-from django.contrib import messages  # Flash messages for user feedback
-from django.core.exceptions import ObjectDoesNotExist  # Exception handling
-from django.views.generic.detail import DetailView  # Class-based detail view
-
-from .models import UserProfile, Book, Library  # Importing necessary models
-from .forms import BookForm  # Form for adding and editing books
-from .models import Library
-
-
-
-
-
-
-
-
+from .models import UserProfile, Book, Library
+from .forms import BookForm
 
 # Role Check Functions
 def is_admin(user):
@@ -45,47 +35,35 @@ def is_member(user):
             return False
     return False
 
-# Authentication Views
-def login_view(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('home')  # Redirect to home after successful login
-        else:
-            messages.error(request, 'Invalid username or password')
-    return render(request, 'relationship_app/login.html')
+# Authentication Views using Django's Built-In Views
+class CustomLoginView(auth_views.LoginView):
+    template_name = 'relationship_app/login.html'
 
-def logout_view(request):
-    logout(request)
-    return redirect('login')  # Redirect to login page after logout
-
-# Registration View
-def register_view(request):
-    return render(request, 'relationship_app/register.html')
-
-# Book List View
-def list_books(request):
-    books = Book.objects.all()  # Fetch all books from the database
-    return render(request, 'relationship_app/list_books.html', {'books': books})
-
-# Home View
-def home(request):
-    return render(request, 'relationship_app/home.html')
+class CustomLogoutView(auth_views.LogoutView):
+    next_page = 'login'
 
 # Registration View
 def register_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Account created successfully! You can now log in.')
-            return redirect('login')
+            user = form.save()
+            login(request, user)  # Log in user after registration
+            messages.success(request, 'Account created successfully! You are now logged in.')
+            return redirect('home')
     else:
         form = UserCreationForm()
     return render(request, 'relationship_app/register.html', {'form': form})
+
+# Book List View
+def list_books(request):
+    books = Book.objects.all()
+    return render(request, 'relationship_app/list_books.html', {'books': books})
+
+# Home View
+@login_required
+def home(request):
+    return render(request, 'relationship_app/home.html')
 
 # Admin View
 @user_passes_test(is_admin, login_url='login')
@@ -98,14 +76,6 @@ def admin_view(request):
 @login_required
 def librarian_view(request):
     return render(request, 'relationship_app/librarian_view.html')
-
-class Library(models.Model):
-    name = models.CharField(max_length=100)
-    location = models.CharField(max_length=200)
-    established_date = models.DateField()
-
-    def __str__(self):
-        return self.name
 
 class LibraryDetailView(DetailView):
     model = Library
@@ -158,5 +128,5 @@ def delete_book(request, book_id):
 # Library Detail View
 def library_detail(request, library_id):
     library = get_object_or_404(Library, id=library_id)
-    books = library.books.all()  # Get all books in the library
+    books = library.books.all()
     return render(request, 'relationship_app/library_detail.html', {'library': library, 'books': books})
