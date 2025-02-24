@@ -1,6 +1,4 @@
-from django.contrib.auth import authenticate, login  # Authentication functions
-from django.contrib.auth import authenticate, logout  
-
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm  # Form for user registration
 from django.contrib.auth.decorators import user_passes_test, login_required  # Access control decorators
 from django.contrib.auth.decorators import permission_required  # Specifically added this line
