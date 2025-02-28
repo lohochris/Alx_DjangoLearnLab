@@ -1,5 +1,11 @@
-<form method="post" action="{% url 'your_view_name' %}">
+<!-- LibraryProject/bookshelf/templates/bookshelf/form_example.html -->
+
+<form method="post" action="{% url 'example_form_view' %}">
     {% csrf_token %}
-    <!-- Your form fields go here -->
+    
+    <!-- Render form fields dynamically -->
+    {{ form.as_p }}
+    
+    <!-- Submit button -->
     <button type="submit">Submit</button>
 </form>
