@@ -152,6 +152,12 @@ CSP_SCRIPT_SRC = ("'self'", 'https://trusted-scripts.com')  # Trusted sources fo
 CSP_STYLE_SRC = ("'self'", 'https://trusted-styles.com')  # Trusted sources for styles
 CSP_IMG_SRC = ("'self'", 'data:', 'https://trusted-images.com')  # Trusted sources for images
 
+# -------------------
+# SSL and Proxy Settings
+# -------------------
+SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # HTTPS Configuration Note:
 # Ensure you have valid SSL certificates when deploying this app in production.
 # Consider using Let's Encrypt (https://letsencrypt.org) for free SSL certificates.
