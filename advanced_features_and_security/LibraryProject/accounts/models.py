@@ -1,8 +1,7 @@
-# accounts/models.py 
-
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
+from django.core.validators import FileExtensionValidator
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -31,6 +30,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
+
+    # New fields
+    date_of_birth = models.DateField(null=True, blank=True)
+    profile_photo = models.ImageField(
+        upload_to='profile_photos/',
+        null=True,
+        blank=True,
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])]
+    )
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
