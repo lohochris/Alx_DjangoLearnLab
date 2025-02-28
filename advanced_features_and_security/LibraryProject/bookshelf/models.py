@@ -62,5 +62,7 @@ class Book(models.Model):
             ("can_publish_books", "Can publish books"),
             ("can_archive_books", "Can archive books"),
             ("can_edit_books", "Can edit book details"),
+            ("can_create", "Can create new books"),
+            ("can_delete", "Can delete books"),
         ]
         ordering = ['-published_date']
