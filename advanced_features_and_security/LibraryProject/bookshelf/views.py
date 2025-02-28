@@ -1,5 +1,3 @@
-# bookshelf/views.py
-
 # Import necessary modules
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.exceptions import PermissionDenied
@@ -11,17 +9,18 @@ from .forms import BookSearchForm, ExampleForm  # Added ExampleForm import
 @login_required
 def search_books(request):
     # Initialize the form and the books list
-    form = BookSearchForm(request.GET or None)
+    search_form = BookSearchForm(request.GET or None)
+    example_form = ExampleForm()  # Added ExampleForm instance here
     books = []
 
     # Check if the form is valid and perform the search
-    if form.is_valid():
-        query = form.cleaned_data['query']
+    if search_form.is_valid():
+        query = search_form.cleaned_data['query']
         # Use Django ORM with icontains for case-insensitive matching
         books = Book.objects.filter(Q(title__icontains=query) | Q(author__icontains=query))
 
     # Render the template with the form and search results
-    return render(request, 'bookshelf/book_list.html', {'form': form, 'books': books})
+    return render(request, 'bookshelf/book_list.html', {'form': search_form, 'example_form': example_form, 'books': books})
 
 
 @login_required
