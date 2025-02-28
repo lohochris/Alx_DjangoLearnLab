@@ -1,12 +1,12 @@
 # bookshelf/views.py
 
 # Import necessary modules
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Book
-from .forms import BookSearchForm
+from .forms import BookSearchForm, ExampleForm  # Added ExampleForm import
 
 @login_required
 def search_books(request):
@@ -27,13 +27,14 @@ def search_books(request):
 @login_required
 @permission_required('bookshelf.can_create', raise_exception=True)
 def create_book(request):
+    # Using ExampleForm instead of BookSearchForm
     if request.method == 'POST':
-        form = BookSearchForm(request.POST)
+        form = ExampleForm(request.POST)
         if form.is_valid():
             form.save()
-            return render(request, 'bookshelf/book_success.html')
+            return redirect('book_success')  # Redirecting to a success page
     else:
-        form = BookSearchForm()
+        form = ExampleForm()
     return render(request, 'bookshelf/book_form.html', {'form': form})
 
 
@@ -48,3 +49,16 @@ def delete_book(request, book_id):
 
     book.delete()
     return render(request, 'bookshelf/book_deleted.html')
+
+
+# New View: Example Form Handling
+@login_required
+def example_form_view(request):
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('example_success')
+    else:
+        form = ExampleForm()
+    return render(request, 'bookshelf/example_form.html', {'form': form})
