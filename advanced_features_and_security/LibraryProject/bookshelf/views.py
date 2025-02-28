@@ -1,11 +1,14 @@
 # bookshelf/views.py
 
 # Import necessary modules
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.core.exceptions import PermissionDenied
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required, permission_required
 from .models import Book
 from .forms import BookSearchForm
 
+@login_required
 def search_books(request):
     # Initialize the form and the books list
     form = BookSearchForm(request.GET or None)
@@ -15,7 +18,33 @@ def search_books(request):
     if form.is_valid():
         query = form.cleaned_data['query']
         # Use Django ORM with icontains for case-insensitive matching
-        books = Book.objects.filter(title__icontains=query)
-    
+        books = Book.objects.filter(Q(title__icontains=query) | Q(author__icontains=query))
+
     # Render the template with the form and search results
     return render(request, 'bookshelf/book_list.html', {'form': form, 'books': books})
+
+
+@login_required
+@permission_required('bookshelf.can_create', raise_exception=True)
+def create_book(request):
+    if request.method == 'POST':
+        form = BookSearchForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return render(request, 'bookshelf/book_success.html')
+    else:
+        form = BookSearchForm()
+    return render(request, 'bookshelf/book_form.html', {'form': form})
+
+
+@login_required
+@permission_required('bookshelf.can_delete', raise_exception=True)
+def delete_book(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+
+    # Check if the user has permission to delete the book
+    if not request.user.has_perm('bookshelf.can_delete'):
+        raise PermissionDenied("You do not have permission to delete this book.")
+
+    book.delete()
+    return render(request, 'bookshelf/book_deleted.html')
