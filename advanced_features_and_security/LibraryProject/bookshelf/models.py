@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+from accounts.models import CustomUser as BaseCustomUser
 
 User = get_user_model()
 
@@ -25,3 +26,10 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+
+
+# Proxy model for CustomUser
+class CustomUser(BaseCustomUser):
+    class Meta:
+        proxy = True
+
