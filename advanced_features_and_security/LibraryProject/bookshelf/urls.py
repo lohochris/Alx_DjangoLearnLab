@@ -19,6 +19,10 @@ from bookshelf.views import search_books  # Import your view here
 
 urlpatterns = [
     path('search/', search_books, name='search_books'),
+    path('create/', views.create_book, name='create_book'),
+    path('example/', views.example_form_view, name='example_form'),
+    path('example/success/', views.example_success, name='example_success'),
+
 ]
 
 
