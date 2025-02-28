@@ -4,7 +4,8 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Book
-from .forms import BookSearchForm, ExampleForm  # Added ExampleForm import
+from .forms import BookSearchForm  # Importing BookSearchForm
+from .forms import ExampleForm     # Explicitly importing ExampleForm
 
 @login_required
 def search_books(request):
