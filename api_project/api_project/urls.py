@@ -1,23 +1,12 @@
-"""
-URL configuration for api_project project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
-"""
-
-from django.contrib import admin
 from django.urls import path, include
-from django.http import JsonResponse
+from rest_framework.routers import DefaultRouter
+from .views import BookViewSet, BookList  # Ensure BookList is imported
 
-# Function-based view to handle the root URL "/"
-def home(request):
-    return JsonResponse({
-        "message": "Welcome to the Django API",
-        "endpoints": ["/admin/", "/api/books/"]
-    })
+# Create a router and register the ViewSet
+router = DefaultRouter()
+router.register(r'books', BookViewSet, basename='book')
 
 urlpatterns = [
-    path('', home, name='home'),  # Handle requests to "/"
-    path('admin/', admin.site.urls),
-    path('api/', include('api.urls')),  # Include API routes
+    path('', include(router.urls)),  # This will include /api/books/
+    path('books-list/', BookList.as_view(), name='book-list'),  # Add BookList view
 ]
