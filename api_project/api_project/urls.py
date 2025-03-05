@@ -1,12 +1,18 @@
+from django.contrib import admin
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import BookViewSet, BookList  # Ensure BookList is imported
+from django.http import JsonResponse
+from api.views import BookList  # Import BookList view
 
-# Create a router and register the ViewSet
-router = DefaultRouter()
-router.register(r'books', BookViewSet, basename='book')
+# Function-based view to handle the root URL "/"
+def home(request):
+    return JsonResponse({
+        "message": "Welcome to the Django API",
+        "endpoints": ["/admin/", "/api/books/", "/api/books-list/"]
+    })
 
 urlpatterns = [
-    path('', include(router.urls)),  # This will include /api/books/
-    path('books-list/', BookList.as_view(), name='book-list'),  # Add BookList view
+    path('', home, name='home'),  # Handle requests to "/"
+    path('admin/', admin.site.urls),
+    path('api/', include('api.urls')),  # Include API routes
+    path('api/books-list/', BookList.as_view(), name='book-list'),  # Ensure BookList is added
 ]
