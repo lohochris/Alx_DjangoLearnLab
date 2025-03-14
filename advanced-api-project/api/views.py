@@ -2,10 +2,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, permissions, filters, status
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated  # Added missing imports
 from .models import Book
 from .serializers import BookSerializer
 from .permissions import IsOwnerOrReadOnly  # Custom permission
-from django_filters import rest_framework
 
 class BookListView(generics.ListAPIView):
     """
@@ -15,14 +15,14 @@ class BookListView(generics.ListAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.AllowAny]  # Anyone can view books
+    permission_classes = [IsAuthenticatedOrReadOnly]  # Updated to include IsAuthenticatedOrReadOnly
     
     # Enable filtering, searching, and ordering
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['title', 'author', 'publication_year']  # Filter books by these fields
-    search_fields = ['title', 'author']  # Allow searching by title and author
-    ordering_fields = ['title', 'publication_year']  # Allow ordering by title and publication year
-    ordering = ['title']  # Default ordering
+    filterset_fields = ['title', 'author', 'publication_year']
+    search_fields = ['title', 'author']
+    ordering_fields = ['title', 'publication_year']
+    ordering = ['title']
 
 class BookDetailView(generics.RetrieveAPIView):
     """
@@ -32,7 +32,7 @@ class BookDetailView(generics.RetrieveAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     lookup_field = 'pk'
-    permission_classes = [permissions.AllowAny]  # Anyone can view a book
+    permission_classes = [IsAuthenticatedOrReadOnly]  # Updated to include IsAuthenticatedOrReadOnly
 
 class BookCreateView(generics.CreateAPIView):
     """
@@ -42,7 +42,7 @@ class BookCreateView(generics.CreateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]  # Updated to use IsAuthenticated
 
     def perform_create(self, serializer):
         """
@@ -58,7 +58,7 @@ class BookCreateView(generics.CreateAPIView):
         if publication_year > 2024:
             raise ValidationError({'publication_year': 'Publication year cannot be in the future.'})
 
-        serializer.save(owner=self.request.user)  # Set the book owner
+        serializer.save(owner=self.request.user)
 
 class BookUpdateView(generics.UpdateAPIView):
     """
@@ -69,7 +69,7 @@ class BookUpdateView(generics.UpdateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]  # Custom permission
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]  # Updated to use IsAuthenticated
 
     def perform_update(self, serializer):
         """
@@ -97,4 +97,4 @@ class BookDeleteView(generics.DestroyAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]  # Custom permission
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]  # Updated to use IsAuthenticated
