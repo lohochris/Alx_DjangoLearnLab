@@ -1,8 +1,9 @@
+from django_filters import rest_framework as filters  # Added missing import
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics, permissions, filters, status
+from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated  # Added missing imports
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from .models import Book
 from .serializers import BookSerializer
 from .permissions import IsOwnerOrReadOnly  # Custom permission
@@ -15,10 +16,10 @@ class BookListView(generics.ListAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]  # Updated to include IsAuthenticatedOrReadOnly
+    permission_classes = [IsAuthenticatedOrReadOnly]
     
     # Enable filtering, searching, and ordering
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [DjangoFilterBackend, filters.DjangoFilterBackend]
     filterset_fields = ['title', 'author', 'publication_year']
     search_fields = ['title', 'author']
     ordering_fields = ['title', 'publication_year']
@@ -32,7 +33,7 @@ class BookDetailView(generics.RetrieveAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     lookup_field = 'pk'
-    permission_classes = [IsAuthenticatedOrReadOnly]  # Updated to include IsAuthenticatedOrReadOnly
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class BookCreateView(generics.CreateAPIView):
     """
@@ -42,7 +43,7 @@ class BookCreateView(generics.CreateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated]  # Updated to use IsAuthenticated
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         """
@@ -69,7 +70,7 @@ class BookUpdateView(generics.UpdateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]  # Updated to use IsAuthenticated
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
     def perform_update(self, serializer):
         """
@@ -97,4 +98,4 @@ class BookDeleteView(generics.DestroyAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]  # Updated to use IsAuthenticated
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
