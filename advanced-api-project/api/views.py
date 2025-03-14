@@ -5,6 +5,7 @@ from rest_framework.exceptions import ValidationError
 from .models import Book
 from .serializers import BookSerializer
 from .permissions import IsOwnerOrReadOnly  # Custom permission
+from django_filters import rest_framework
 
 class BookListView(generics.ListAPIView):
     """
