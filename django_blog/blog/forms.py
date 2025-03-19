@@ -26,7 +26,7 @@ class PostForm(forms.ModelForm):
     tags = forms.ModelMultipleChoiceField(
         queryset=Tag.objects.all().order_by('name'),  # Sort tags alphabetically
         required=False,  # Allow posts without tags
-        widget=TagWidget,  # Use the custom TagWidget for tag selection
+        widget=TagWidget(),  # Use the custom TagWidget for tag selection
         label="Select Tags"
     )
 
@@ -44,12 +44,6 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'content', 'tags']  # Include the 'tags' field
-
-    # You can define widgets here too
-    widgets = {
-        'title': forms.TextInput(attrs={'placeholder': 'Enter the title of the post'}),
-        'content': forms.Textarea(attrs={'placeholder': 'Write the content of your post here'})
-    }
 
 # Comment Form (For Creating and Editing Comments)
 class CommentForm(forms.ModelForm):
