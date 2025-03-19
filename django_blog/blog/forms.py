@@ -1,29 +1,51 @@
-from django.urls import path
-from . import views
+from django import forms
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from .models import Post, Tag, Comment  # Import Comment model
 
-urlpatterns = [
-    # User Authentication URLs
-    path('', views.home, name='home'),  # Home Page
-    path('register/', views.register, name='register'),  # User Registration
-    path('login/', views.user_login, name='login'),  # User Login
-    path('logout/', views.user_logout, name='logout'),  # User Logout
-    path('profile/', views.profile, name='profile'),  # User Profile
+# User Registration Form
+class UserRegisterForm(UserCreationForm):
+    email = forms.EmailField(
+        required=True, 
+        widget=forms.EmailInput(attrs={'placeholder': 'Enter your email'})
+    )
 
-    # CRUD URLs for Blog Posts
-    path('posts/', views.PostListView.as_view(), name='post-list'),  # View all posts
-    path('posts/<int:pk>/', views.PostDetailView.as_view(), name='post-detail'),  # View a single post
-    path('posts/new/', views.PostCreateView.as_view(), name='post-create'),  # Create a new post
-    path('posts/<int:pk>/update/', views.PostUpdateView.as_view(), name='post-update'),  # Update a post
-    path('posts/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post-delete'),  # Delete a post
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
 
-    # Comment URLs
-    path('comments/<int:pk>/update/', views.CommentUpdateView.as_view(), name='comment-update'),  # Update a comment
-    path('posts/<int:pk>/comments/new/', views.CommentCreateView.as_view(), name='comment-create'),  # Create a new comment
-    path('comments/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment-delete'),  # Delete a comment
+# Post Form (For Creating and Editing Posts)
+class PostForm(forms.ModelForm):
+    # Add a field for selecting tags
+    tags = forms.ModelMultipleChoiceField(
+        queryset=Tag.objects.all().order_by('name'),  # Sort tags alphabetically
+        required=False,  # Allow posts without tags
+        widget=forms.CheckboxSelectMultiple,
+        label="Select Tags"
+    )
 
-    # Search URL
-    path('search/', views.search, name='search'),  # Search results page
+    title = forms.CharField(
+        max_length=200,
+        widget=forms.TextInput(attrs={'placeholder': 'Enter the title of the post'}),
+        label='Post Title'
+    )
+    
+    content = forms.CharField(
+        widget=forms.Textarea(attrs={'placeholder': 'Write the content of your post here'}),
+        label='Post Content'
+    )
 
-    # Tag filtering URL
-    path('tags/<slug:tag_slug>/', views.PostByTagListView.as_view(), name='tag-posts'),  # Posts filtered by tag
-]
+    class Meta:
+        model = Post
+        fields = ['title', 'content', 'tags']  # Include the 'tags' field
+
+# Comment Form (For Creating and Editing Comments)
+class CommentForm(forms.ModelForm):
+    content = forms.CharField(
+        widget=forms.Textarea(attrs={'placeholder': 'Write your comment here', 'rows': 3}),
+        label='Comment'
+    )
+
+    class Meta:
+        model = Comment
+        fields = ['content']  # Only include the 'content' field for comments
