@@ -1,26 +1,19 @@
 from django import forms
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
-from .models import Post, Tag, Comment  # Import Comment model
+from django.forms import widgets
+from .models import Tag
 
-# User Registration Form
-class UserRegisterForm(UserCreationForm):
-    email = forms.EmailField(
-        required=True, 
-        widget=forms.EmailInput(attrs={'placeholder': 'Enter your email'})
-    )
-
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password1', 'password2']
+# Custom Tag Widget
+class TagWidget(widgets.CheckboxSelectMultiple):
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = Tag.objects.all()  # Get all the tags from the database
+        super().__init__(*args, **kwargs)
 
 # Post Form (For Creating and Editing Posts)
 class PostForm(forms.ModelForm):
-    # Add a field for selecting tags
     tags = forms.ModelMultipleChoiceField(
         queryset=Tag.objects.all().order_by('name'),  # Sort tags alphabetically
         required=False,  # Allow posts without tags
-        widget=forms.CheckboxSelectMultiple,
+        widget=TagWidget(),  # Using the custom TagWidget here
         label="Select Tags"
     )
 
@@ -38,14 +31,3 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'content', 'tags']  # Include the 'tags' field
-
-# Comment Form (For Creating and Editing Comments)
-class CommentForm(forms.ModelForm):
-    content = forms.CharField(
-        widget=forms.Textarea(attrs={'placeholder': 'Write your comment here', 'rows': 3}),
-        label='Comment'
-    )
-
-    class Meta:
-        model = Comment
-        fields = ['content']  # Only include the 'content' field for comments
