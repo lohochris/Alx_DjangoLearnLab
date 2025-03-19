@@ -24,3 +24,17 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk': self.pk})
+
+# Comment Model for blog comments
+class Comment(models.Model):
+    post = models.ForeignKey(Post, related_name="comments", on_delete=models.CASCADE)  # Link to the Post
+    author = models.ForeignKey(User, on_delete=models.CASCADE)  # Link to the User who wrote the comment
+    content = models.TextField()  # The content of the comment
+    created_at = models.DateTimeField(auto_now_add=True)  # Timestamp for when the comment was created
+    updated_at = models.DateTimeField(auto_now=True)  # Timestamp for when the comment was last updated
+
+    def __str__(self):
+        return f"Comment by {self.author.username} on {self.post.title}"
+
+    def get_absolute_url(self):
+        return reverse('post-detail', kwargs={'pk': self.post.pk})
