@@ -1,10 +1,11 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.forms.widgets import CheckboxSelectMultiple  # Importing CheckboxSelectMultiple widget directly from widgets module
 from .models import Post, Tag, Comment  # Import Comment model
 
 # Custom TagWidget (optional, depends on your needs)
-class TagWidget(forms.CheckboxSelectMultiple):
+class TagWidget(CheckboxSelectMultiple):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.attrs.update({'class': 'custom-tag-widget'})  # You can add custom classes or attributes if needed
