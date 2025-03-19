@@ -1,4 +1,3 @@
-# models.py
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -17,6 +16,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    published_date = models.DateTimeField(null=True, blank=True)  # Add the published_date field
     tags = models.ManyToManyField(Tag, related_name="posts", blank=True)  # Establish a many-to-many relationship with Tag
 
     def __str__(self):
