@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Post, Tag  # Import the Post and Tag models
+from .models import Post, Tag, Comment  # Import Comment model
 
 # User Registration Form
 class UserRegisterForm(UserCreationForm):
@@ -38,3 +38,14 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'content', 'tags']  # Include the 'tags' field
+
+# Comment Form (For Creating and Editing Comments)
+class CommentForm(forms.ModelForm):
+    content = forms.CharField(
+        widget=forms.Textarea(attrs={'placeholder': 'Write your comment here', 'rows': 3}),
+        label='Comment'
+    )
+
+    class Meta:
+        model = Comment
+        fields = ['content']  # Only include the 'content' field for comments
