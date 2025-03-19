@@ -3,12 +3,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Post, Tag, Comment  # Import Comment model
 
-# Custom TagWidget (optional, depends on your needs)
-class TagWidget(forms.CheckboxSelectMultiple):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.attrs.update({'class': 'custom-class'})  # You can add custom classes or attributes if needed
-
 # User Registration Form
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(
@@ -26,7 +20,7 @@ class PostForm(forms.ModelForm):
     tags = forms.ModelMultipleChoiceField(
         queryset=Tag.objects.all().order_by('name'),  # Sort tags alphabetically
         required=False,  # Allow posts without tags
-        widget=TagWidget,  # Use the custom TagWidget for tag selection
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'tags-checkbox'}),  # Using CheckboxSelectMultiple widget with additional attributes
         label="Select Tags"
     )
 
