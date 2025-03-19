@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib import messages
-from .models import Post, Tag
+from .models import Post, Tag, Comment  # Import Comment model
 from .forms import UserRegisterForm, PostForm
 from django.contrib.auth.forms import UserChangeForm
 from django.db.models import Q  # Import Q for complex queries
@@ -126,6 +126,57 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def handle_no_permission(self):
         messages.error(self.request, 'You are not authorized to delete this post.')
         return redirect('post-list')
+
+# Comment CRUD Views
+
+# Create a new comment
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    fields = ['content']
+    template_name = 'blog/comment_form.html'
+
+    def form_valid(self, form):
+        post = Post.objects.get(pk=self.kwargs['pk'])
+        form.instance.post = post
+        form.instance.author = self.request.user
+        messages.success(self.request, 'Your comment has been added successfully!')
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('post-detail', kwargs={'pk': self.kwargs['pk']})
+
+# Update an existing comment
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Comment
+    fields = ['content']
+    template_name = 'blog/comment_form.html'
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Your comment has been updated successfully!')
+        return super().form_valid(form)
+
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
+
+    def get_success_url(self):
+        return reverse_lazy('post-detail', kwargs={'pk': self.get_object().post.pk})
+
+# Delete a comment
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Comment
+    template_name = 'blog/comment_confirm_delete.html'
+
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Your comment has been deleted successfully!')
+        return super().delete(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy('post-detail', kwargs={'pk': self.get_object().post.pk})
 
 # Search Functionality
 def search(request):
