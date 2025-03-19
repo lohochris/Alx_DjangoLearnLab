@@ -15,9 +15,9 @@ urlpatterns = [
     path('post/new/', views.PostCreateView.as_view(), name='post-create'),  # Create a new post
 
     # Comment URLs
-    path('comments/<int:pk>/update/', views.CommentUpdateView.as_view(), name='comment-update'),  # Update a comment
+    path('comment/<int:pk>/update/', views.CommentUpdateView.as_view(), name='comment-update'),  # Update a comment
+    path('comment/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment-delete'),  # Delete a comment
     path('post/<int:pk>/comments/new/', views.CommentCreateView.as_view(), name='comment-create'),  # Create a new comment
-    path('comments/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment-delete'),  # Delete a comment
 
     # Search URL
     path('search/', views.search, name='search'),  # Search results page
