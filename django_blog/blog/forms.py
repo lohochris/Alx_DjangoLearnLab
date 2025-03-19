@@ -3,6 +3,12 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Post, Tag, Comment  # Import Comment model
 
+# Custom TagWidget (optional, depends on your needs)
+class TagWidget(forms.CheckboxSelectMultiple):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.attrs.update({'class': 'custom-tag-widget'})  # You can add custom classes or attributes if needed
+
 # User Registration Form
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(
@@ -16,11 +22,11 @@ class UserRegisterForm(UserCreationForm):
 
 # Post Form (For Creating and Editing Posts)
 class PostForm(forms.ModelForm):
-    # Add a field for selecting tags
+    # Add a field for selecting tags using the custom TagWidget
     tags = forms.ModelMultipleChoiceField(
         queryset=Tag.objects.all().order_by('name'),  # Sort tags alphabetically
         required=False,  # Allow posts without tags
-        widget=forms.CheckboxSelectMultiple(attrs={'class': 'tags-checkbox'}),  # Using CheckboxSelectMultiple widget with additional attributes
+        widget=TagWidget,  # Use the custom TagWidget for tag selection
         label="Select Tags"
     )
 
@@ -38,6 +44,12 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'content', 'tags']  # Include the 'tags' field
+
+    # You can define widgets here too
+    widgets = {
+        'title': forms.TextInput(attrs={'placeholder': 'Enter the title of the post'}),
+        'content': forms.Textarea(attrs={'placeholder': 'Write the content of your post here'})
+    }
 
 # Comment Form (For Creating and Editing Comments)
 class CommentForm(forms.ModelForm):
