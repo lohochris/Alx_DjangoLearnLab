@@ -103,6 +103,11 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         post = self.get_object()
         return self.request.user == post.author
 
+    # Redirect unauthenticated users or users who are not authors
+    def handle_no_permission(self):
+        messages.error(self.request, 'You are not authorized to edit this post.')
+        return redirect('post-list')
+
 # Delete a post (Only author can delete)
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
@@ -116,6 +121,11 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Your post has been deleted successfully!')
         return super().delete(request, *args, **kwargs)
+
+    # Redirect unauthenticated users or users who are not authors
+    def handle_no_permission(self):
+        messages.error(self.request, 'You are not authorized to delete this post.')
+        return redirect('post-list')
 
 # Search Functionality
 def search(request):
