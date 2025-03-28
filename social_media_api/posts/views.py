@@ -2,7 +2,7 @@ from rest_framework import viewsets, generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.views import APIView
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404  # Ensure correct import
 from .models import Post, Comment, Like
 from .serializers import PostSerializer, CommentSerializer, LikeSerializer
 from notifications.models import Notification  # Import Notification model
@@ -61,7 +61,7 @@ class LikePostView(APIView):
 
     def post(self, request, pk):
         """Like a post."""
-        post = get_object_or_404(Post, pk=pk)
+        post = generics.get_object_or_404(Post, pk=pk)  # Ensuring correct usage of generics.get_object_or_404
         like, created = Like.objects.get_or_create(user=request.user, post=post)
         if not created:
             return Response({"message": "Already liked this post"}, status=status.HTTP_400_BAD_REQUEST)
@@ -81,7 +81,7 @@ class UnlikePostView(APIView):
 
     def post(self, request, pk):
         """Unlike a post."""
-        post = get_object_or_404(Post, pk=pk)
+        post = generics.get_object_or_404(Post, pk=pk)  # Correct usage of generics.get_object_or_404
         try:
             like = Like.objects.get(user=request.user, post=post)
             like.delete()
