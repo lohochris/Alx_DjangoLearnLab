@@ -4,6 +4,9 @@ from django.contrib.auth import get_user_model
 from .models import CustomUser
 
 class UserSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(max_length=150)
+    bio = serializers.CharField(allow_blank=True, required=False)
+    profile_picture = serializers.CharField(allow_blank=True, required=False)
     followers_count = serializers.IntegerField(source="followers.count", read_only=True)
     following_count = serializers.IntegerField(source="following.count", read_only=True)
 
