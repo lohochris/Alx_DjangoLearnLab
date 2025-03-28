@@ -13,7 +13,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "your-default-secret-key")
 if SECRET_KEY.startswith("django-insecure-") or len(set(SECRET_KEY)) < 5:
     raise ValueError("Your SECRET_KEY is weak. Generate a strong, unique key.")
 
-DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+DEBUG = False  # Explicitly setting DEBUG to False
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(", ")
 
