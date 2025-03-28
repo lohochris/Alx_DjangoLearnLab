@@ -2,8 +2,10 @@ from rest_framework import viewsets, generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 from .models import Post, Comment, Like
 from .serializers import PostSerializer, CommentSerializer, LikeSerializer
+from notifications.models import Notification  # Import Notification model
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by('-created_at')
@@ -11,7 +13,14 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        post = serializer.save(author=self.request.user)
+        # Create a notification when a new post is created
+        Notification.objects.create(
+            recipient=self.request.user,
+            actor=self.request.user,
+            verb="posted",
+            target=post
+        )
 
     @action(detail=False, methods=['get'], permission_classes=[permissions.IsAuthenticated])
     def feed(self, request):
@@ -28,7 +37,14 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        comment = serializer.save(author=self.request.user)
+        # Create a notification when a comment is added
+        Notification.objects.create(
+            recipient=comment.post.author,
+            actor=self.request.user,
+            verb="commented on",
+            target=comment.post
+        )
 
 class FeedView(generics.ListAPIView):
     """Retrieve posts from followed users."""
@@ -45,10 +61,19 @@ class LikePostView(APIView):
 
     def post(self, request, pk):
         """Like a post."""
-        post = Post.objects.get(pk=pk)
+        post = get_object_or_404(Post, pk=pk)
         like, created = Like.objects.get_or_create(user=request.user, post=post)
         if not created:
             return Response({"message": "Already liked this post"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create a notification when a post is liked
+        Notification.objects.create(
+            recipient=post.author,
+            actor=request.user,
+            verb="liked",
+            target=post
+        )
+
         return Response({"message": "Post liked successfully"}, status=status.HTTP_201_CREATED)
 
 class UnlikePostView(APIView):
@@ -56,8 +81,9 @@ class UnlikePostView(APIView):
 
     def post(self, request, pk):
         """Unlike a post."""
+        post = get_object_or_404(Post, pk=pk)
         try:
-            like = Like.objects.get(user=request.user, post_id=pk)
+            like = Like.objects.get(user=request.user, post=post)
             like.delete()
             return Response({"message": "Post unliked successfully"}, status=status.HTTP_200_OK)
         except Like.DoesNotExist:
