@@ -4,9 +4,9 @@ from django.contrib.auth import get_user_model
 from .models import CustomUser
 
 class UserSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(max_length=150)
-    bio = serializers.CharField(allow_blank=True, required=False)
-    profile_picture = serializers.CharField(allow_blank=True, required=False)
+    username = serializers.CharField(max_length=150)  # serializers.CharField()
+    bio = serializers.CharField(allow_blank=True, required=False)  # serializers.CharField()
+    profile_picture = serializers.CharField(allow_blank=True, required=False)  # serializers.CharField()
     followers_count = serializers.IntegerField(source="followers.count", read_only=True)
     following_count = serializers.IntegerField(source="following.count", read_only=True)
 
@@ -15,9 +15,9 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'bio', 'profile_picture', 'followers_count', 'following_count']
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(max_length=150)
-    email = serializers.CharField(max_length=255)
-    password = serializers.CharField(write_only=True, style={'input_type': 'password'})
+    username = serializers.CharField(max_length=150)  # serializers.CharField()
+    email = serializers.CharField(max_length=255)  # serializers.CharField()
+    password = serializers.CharField(write_only=True, style={'input_type': 'password'})  # serializers.CharField()
 
     class Meta:
         model = get_user_model()
