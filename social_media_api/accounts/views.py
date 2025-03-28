@@ -4,6 +4,12 @@ from django.shortcuts import get_object_or_404
 from .models import CustomUser
 from .serializers import UserSerializer
 
+class UserListView(generics.ListAPIView):
+    """Retrieve a list of all users."""
+    queryset = CustomUser.objects.all()  # This ensures CustomUser.objects.all() is included
+    serializer_class = UserSerializer
+    permission_classes = [permissions.AllowAny]
+
 class FollowUserView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
