@@ -31,7 +31,11 @@ CSRF_COOKIE_SECURE = os.getenv("CSRF_COOKIE_SECURE", "False").lower() == "true"
 
 # CSRF & CORS Configuration (Ensure Proper Domain Handling)
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "http://localhost,http://127.0.0.1").split(", ")
-CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost,http://127.0.0.1").split(", ")
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost",
+    "http://127.0.0.1"
+]
+
 CORS_ALLOW_CREDENTIALS = True
 
 # APPLICATION DEFINITION
