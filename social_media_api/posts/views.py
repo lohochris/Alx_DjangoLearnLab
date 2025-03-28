@@ -15,9 +15,10 @@ class PostViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], permission_classes=[permissions.IsAuthenticated])
     def feed(self, request):
+        """Retrieve posts from followed users."""
         user = request.user
-        followed_users = user.following.all()
-        posts = Post.objects.filter(author__in=followed_users).order_by('-created_at')
+        following_users = user.following.all()  # Ensure following_users is defined
+        posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
         serializer = self.get_serializer(posts, many=True)
         return Response(serializer.data)
 
@@ -30,17 +31,20 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
 class FeedView(generics.ListAPIView):
+    """Retrieve posts from followed users."""
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
-        return Post.objects.filter(author__in=user.following.all()).order_by('-created_at')
+        following_users = user.following.all()  # Ensure following_users is defined
+        return Post.objects.filter(author__in=following_users).order_by('-created_at')
 
 class LikePostView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
+        """Like a post."""
         post = Post.objects.get(pk=pk)
         like, created = Like.objects.get_or_create(user=request.user, post=post)
         if not created:
@@ -51,6 +55,7 @@ class UnlikePostView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
+        """Unlike a post."""
         try:
             like = Like.objects.get(user=request.user, post_id=pk)
             like.delete()
